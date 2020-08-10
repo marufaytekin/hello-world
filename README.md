@@ -4,7 +4,7 @@ PRE_REQUISITES:
 	2.Git
 	
 BUILD STEPS: 
-
+	
 	1) clone the github repository into your loacal
 	   
 	   command: git clone -b $BRANCH_NAME $REPO
