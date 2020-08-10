@@ -23,6 +23,7 @@ BUILD STEPS:
 	   command: docker run -dit --mount type=bind,source="$(pwd)",target=/home/hello/hello-world --name build gradle:latest
 	   
 	   Note: After the build execution, the container will exit because there will be no process running inside the container
+	   
     	4) Validation: before you proceed to deployment step please validate build artifact. 
         
            command: ls build/libs/
@@ -33,7 +34,6 @@ BUILD STEPS:
 DEPLOYMENT STEPS:
     
     	1) build a deployment image by executing below command from project root directory 
-	
 	    command: docker build -t hello:latest .
 	
 	2) Deploy the image using below command
