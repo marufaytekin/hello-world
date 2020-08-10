@@ -1,8 +1,10 @@
 PRE_REQUISITES:
+
 	1.Docker
 	2.Git
 	
 BUILD STEPS: 
+
 	1) clone the github repository into your loacal
 	   
 	   command: git clone -b $BRANCH_NAME $REPO
@@ -29,7 +31,8 @@ BUILD STEPS:
 	   
 	 
 DEPLOYMENT STEPS:
-    1) build a deployment image by executing below command from project root directory 
+    
+    	1) build a deployment image by executing below command from project root directory 
 	
 	    command: docker build -t hello:latest .
 	
