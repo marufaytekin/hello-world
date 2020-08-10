@@ -23,10 +23,10 @@ BUILD STEPS:
 	   command: docker run -dit --mount type=bind,source="$(pwd)",target=/home/hello/hello-world --name build gradle:latest
 	   
 	   Note: After the build execution, the container will exit because there will be no process running inside the container
-    4) Validation: before you proceed to deployment step please validate build artifact. 
+    	4) Validation: before you proceed to deployment step please validate build artifact. 
         
-        command: ls build/libs/
-        output:  build/libs/hello-world-0.0.1-SNAPSHOT.jar
+           command: ls build/libs/
+           output:  build/libs/hello-world-0.0.1-SNAPSHOT.jar
        		
 	   
 	 
