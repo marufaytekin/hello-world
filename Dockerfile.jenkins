@@ -12,7 +12,7 @@ ENV artifact ${artifactid}-${version}.jar
 RUN apk add --no-cache curl tar bash procps
 
 WORKDIR /app
-COPY ./target/${artifact} /app
+COPY target/${artifact} /app
 EXPOSE 8080
 ENTRYPOINT ["sh", "-c"]
 CMD ["java ${JAVA_OPTS} -jar ${artifact}"]
