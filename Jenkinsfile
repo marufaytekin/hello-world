@@ -2,13 +2,16 @@ pipeline {
 
     agent any
 
-     stage('Setting up environment variables') {
-        def REGION = 'us-east-1'
-        def BUCKET = 'stanley-jenkins-artifacts'
-        def PROJECT = 'hello-world'
-      }
+
 
     stages {
+             
+        stage('Setting up environment variables') {
+            def REGION = 'us-east-1'
+            def BUCKET = 'stanley-jenkins-artifacts'
+            def PROJECT = 'hello-world'
+        }
+
         stage('Build') {
             steps {
                 sh 'mvn clean package -Dmaven.test.skip=true'
