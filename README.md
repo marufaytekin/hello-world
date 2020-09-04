@@ -39,8 +39,8 @@ NOTE: Please submit github repository url for your solution.
 2. The hello endpoint ["/"] is in HelloController, and health endpoints ["/healthz", "/info"], are in HealthController
 
 #### [Question 3]:
-3. IP addresses and hostname are added into healthz endpoints in case it is deployed in multiple instances and in docker environments, we need a way to identify which instance endpoint we are hitting at.
-4. The ["/info"] endpoint returns more info about the running environment, such as java jvm environment variables, build info, host environment variables
+3. IP addresses and hostname are added into healthz endpoints in case multiple instances are deployed in docker environments, we need a way to identify which instance endpoint we are hitting at.
+4. The ["/info"] endpoint returns more info about the running environment, such as java jvm environment variables, build info, host environment variables. Could add some runtime info such as memory usage, CPU usage % etc, but no time to add them.
 
 #### [Question 4]:
 1. Dockerfile is in deployment directory
