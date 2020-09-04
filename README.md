@@ -54,3 +54,24 @@ docker build . -f Dockerfile -t stanleywxc/hello-world:test
 docker run -d -p 8080:8080 stanleywxc/hello-world:test
 ```
 
+#### [Question 5]:
+##### - What branching strategy would you use for development?
+   I would have 3 major branches: development, staging, and production(master branch), depending on the nature of biz, could have uat(user acceptance branch), feature branches are also very popular in development.
+   
+##### - What CICD tool/service would you use?
+   Depending on the nature of application and deployment environment. If it is in AWS, I would use AWS codedeploy + cloudformation + ECS/EKS, we also can use Jenkins for building artifacts of micro-services builds. 
+   
+##### - What stages would you have in the CICD pipeline?
+     At the high level, CICD piplines are CI Pipeline, which includes stages of Build, Unit Test, Integration Tests and CD Pipeline which includes stages of Review, Staging, Production.
+     
+     At minimum in production deployment, there should be 'build', 'test', (or pre-built artifacts), 'deploy', 'check deployment live status', 'switch traffic', 'wait old traffic dry', 'stop old instances',      'notification deployment status'. 
+     If there are errors happened after deployment and timeout during 'check deployment live status', we should 'rollback' to old deployment and mark this deployment fail. 
+     
+ ##### - What would be the purpose of each stage in CICD pipeline
+   - stage 'build': to build artifacts, or pull the code repo to run the app
+   - stage 'test': to verify the build is functioning as it supposes to, specially the test cases coverages should be sufficient enough to ensure the quality of deployment. This stage includes unit test and integration test.
+   - stage 'deploy': the actual deployment, either deploy into docker/kubernetes, or standalone servers/clusters.
+   - stage 'check deployment live status': this stage is to check if the deployment is functionning before we switch the traffic to the new deployment.
+   - stage 'switch traffic': switch the traffic, and wait the traffic to old deployment drying out.
+   - stage 'stop old instances': after we see the old traffic dried out and the deployment is working, we need to stop the old instances.
+   - stage 'rollback', rollback to old deployment if the new deployment having problems.
