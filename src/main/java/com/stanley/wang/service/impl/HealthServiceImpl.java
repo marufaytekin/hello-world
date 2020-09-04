@@ -1,5 +1,7 @@
 package com.stanley.wang.service.impl;
 
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +20,7 @@ public class HealthServiceImpl implements HealthService {
 		return new HealthInfo()
 				.withStatus("OK")
 				.withVersion(globalInfo.getBuildProperties().getVersion())
-				.withSince(globalInfo.getSince().toString());
+				.withSince(globalInfo.getUptime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 	}
 
 	public RuntimeInfo info() {

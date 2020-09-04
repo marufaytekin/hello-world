@@ -11,7 +11,7 @@ public class HealthInfo {
 	
 	private String 		status;
 	private String		version;
-	private String 		since;
+	private String 		uptime;
 	
 	public ArrayList<String> getIPAddresses() {
 		
@@ -24,9 +24,7 @@ public class HealthInfo {
 			
 			Stream.of(addresses).filter(s->s.isLoopbackAddress() == false)
 								.filter(s->s.isMulticastAddress() == false)
-								.filter(s->s.isLinkLocalAddress() == false)
-								//.filter(s->s.() == false)
-						
+								.filter(s->s.isLinkLocalAddress() == false)						
 								.forEach(address->ips.add(address.getHostAddress()));
 		}
 		catch(Exception e) {}
@@ -60,12 +58,12 @@ public class HealthInfo {
 		this.version = version;
 	}
 
-	public String getSince() {
-		return since;
+	public String getUptime() {
+		return uptime;
 	}
 
-	public void setSince(String since) {
-		this.since = since;
+	public void setUptime(String uptime) {
+		this.uptime = uptime;
 	}
 
 	public HealthInfo withStatus(String status) {
@@ -78,8 +76,8 @@ public class HealthInfo {
 		return this;
 	}
 	
-	public HealthInfo withSince(String since) {
-		this.since = since;
+	public HealthInfo withSince(String uptime) {
+		this.uptime = "up since " + uptime;
 		return this;
 	}
 }

@@ -13,7 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 @Scope(value = WebApplicationContext.SCOPE_APPLICATION, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class GlobalHealthInfo {
 	
-	private static LocalDateTime since = LocalDateTime.now();
+	private static LocalDateTime uptime = LocalDateTime.now();
 
 	@Autowired
 	private BuildProperties buildProperties;
@@ -22,7 +22,7 @@ public class GlobalHealthInfo {
 		return this.buildProperties;
 	}
 	
-	public static LocalDateTime getSince() {
-		return since;
+	public static LocalDateTime getUptime() {
+		return uptime;
 	}
 }
