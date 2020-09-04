@@ -16,6 +16,7 @@ pipeline {
 
         stage('Build') {
             steps {
+                sh 'env sort'
                 sh 'mvn clean package -Dmaven.test.skip=true'
                 echo "Build stage Finished"
             }
