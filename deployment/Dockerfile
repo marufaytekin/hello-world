@@ -26,7 +26,7 @@ FROM maven:3.5-jdk-8-alpine as build
 ARG project=hello-world
 WORKDIR /app
 COPY --from=clone /app/${project} /app
-RUN mvn install -Dmaven.test.skip=true
+RUN mvn install
 
 #----------------------------------------------
 # Step 3: Copy the built binary over and build
