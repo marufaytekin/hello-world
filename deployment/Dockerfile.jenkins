@@ -8,6 +8,9 @@ ARG version=0.0.1
 ENV JAVA_OPTS="-XX:+UseG1GC"
 ENV artifact ${artifactid}-${version}.jar
 
+# Install curl and necessary tools
+RUN apk add --no-cache curl tar bash procps
+
 WORKDIR /app
 COPY target/${artifact} /app
 EXPOSE 8080
