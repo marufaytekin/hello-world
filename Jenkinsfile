@@ -36,9 +36,10 @@ pipeline {
 
                 pwd(); //Log current directory
 
-                withAWS(region:'us-east-1',profile:'default') {
-
-                    s3Upload(bucket: "${BUCKET}", path: "${PROJECT}/", includePathPattern: "**/*.jar", workingDir: "target")
+                script {
+                    withAWS(region:'us-east-1',profile:'default') {
+                        s3Upload(bucket: "${BUCKET}", path: "${PROJECT}/", includePathPattern: "**/*.jar", workingDir: "target")
+                    }
                 }
             }
         }
