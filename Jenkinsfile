@@ -2,11 +2,15 @@ pipeline {
 
     agent any
 
+     stage('Setting up environment variables') {
+        def REGION = 'us-east-1'
+        def BUCKET = 'stanley-jenkins-artifacts'
+        def PROJECT = 'hello-world'
+      }
+
     stages {
         stage('Build') {
             steps {
-                git 'https://github.com/stanleywxc/secure-rest-api.git'
-                echo pwd()
                 sh 'mvn clean package -Dmaven.test.skip=true'
                 echo "Build stage Finished"
             }
@@ -29,9 +33,8 @@ pipeline {
 
                 withAWS(region:'us-east-1',profile:'default') {
 
-                    s3Upload(bucket:"stanley-jenkins-artifacts", path:'/', includePathPattern:'**/*.jar', workingDir:'target')
+                    s3Upload(bucket: "${BUCKET}", path: "${PROJECT}/", includePathPattern: "**/*.jar", workingDir: "target")
                 }
-
             }
         }
     }
