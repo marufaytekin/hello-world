@@ -64,7 +64,7 @@ pipeline {
                 script {
                     /* This builds the actual image; synonymous to
                     * docker build on the command line */
-                    app = docker.build("${env.DOCKER_IMAGE}:${BUILD_NUMBER}", "-f ./deployment/Dockerfile.jenkins ./deployment/")
+                    app = docker.build("${env.DOCKER_IMAGE}:${BUILD_NUMBER}", "-f Dockerfile.jenkins .")
                 }
             }
         }
