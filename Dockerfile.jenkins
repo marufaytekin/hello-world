@@ -1,0 +1,18 @@
+#----------------------------------------------
+# Step 1: Copy the built binary over and build
+#         The docker image
+#----------------------------------------------
+FROM openjdk:8-jre-alpine
+ARG artifactid=hello-world
+ARG version=0.0.1
+ENV JAVA_OPTS="-XX:+UseG1GC"
+ENV artifact ${artifactid}-${version}.jar
+
+# Install curl and necessary tools
+RUN apk add --no-cache curl tar bash procps
+
+WORKDIR /app
+COPY ./target/${artifact} /app
+EXPOSE 8080
+ENTRYPOINT ["sh", "-c"]
+CMD ["java ${JAVA_OPTS} -jar ${artifact}"]
