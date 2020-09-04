@@ -2,14 +2,16 @@ pipeline {
 
     agent any
 
-
-
     stages {
              
         stage('Setting up environment variables') {
-            def REGION = 'us-east-1'
-            def BUCKET = 'stanley-jenkins-artifacts'
-            def PROJECT = 'hello-world'
+            steps {
+                script {
+                    def REGION = 'us-east-1'
+                    def BUCKET = 'stanley-jenkins-artifacts'
+                    def PROJECT = 'hello-world'
+                }
+            }
         }
 
         stage('Build') {
