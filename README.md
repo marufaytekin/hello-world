@@ -32,3 +32,25 @@ for that extra information?
 6. Your solution should include a README explaining how to build and run the application with Docker. We will follow the steps you provide in readme file and execute it to verify.
 
 NOTE: Please submit github repository url for your solution.
+
+### Stanley Wang's solution
+
+1. The restful api is implemented in java via SpringBoot.
+2. The hello endpoint ["/"] is in HelloController, and health endpoints ["/healthz", "/info"], are in HealthController
+
+#### [Question 3]:
+3. IP addresses and hostname are added into healthz endpoints in case multiple instances are deployed in docker environments, we need a way to identify which instance endpoint we are hitting at.
+4. The ["/info"] endpoint returns more info about the running environment, such as java jvm environment variables, build info, host environment variables. Could add some runtime info such as memory usage, CPU usage % etc, but no time to add them.
+
+#### [Question 4]:
+1. Dockerfile is in deployment directory
+2. To build the docker image:
+```
+cd deployment
+docker build . -f Dockerfile -t stanleywxc/hello-world:test
+```
+3. To run the image locally in Docker:
+```
+docker run -d -p 8080:8080 stanleywxc/hello-world:test
+```
+
