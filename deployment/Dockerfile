@@ -12,9 +12,10 @@ RUN git clone ${REPO_URL}
 #----------------------------------------------
 
 FROM maven:3.5-jdk-8-alpine as build
-ARG project=hello-world
+ARG PROJECT=hello-world
+
 WORKDIR /app
-COPY --from=clone /app/${project} /app
+COPY --from=clone /app/${PROJECT} /app
 RUN mvn install
 
 #----------------------------------------------
@@ -22,13 +23,14 @@ RUN mvn install
 #         The docker image
 #----------------------------------------------
 FROM openjdk:8-jre-alpine
-ARG artifactid=hello-world
-ARG version=0.0.1
-ENV jparams="-XX:+UseG1GC"
-ENV artifact ${artifactid}-${version}.jar
+ARG ARTIFACTID=hello-world
+ARG VERSION=0.0.1
+
+ENV JAVA_OPTS="-XX:+UseG1GC"
+ENV artifact ${ARTIFACTID}-${VERSION}.jar
 
 WORKDIR /app
 COPY --from=build /app/target/${artifact} /app
 EXPOSE 8080
 ENTRYPOINT ["sh", "-c"]
-CMD ["java ${jparams} -jar ${artifact}"]
+CMD ["java ${JAVA_OPTS} -jar ${artifact}"]
