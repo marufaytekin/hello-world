@@ -69,9 +69,10 @@ pipeline {
             }
         }
 
+        /*
         stage('Test Docker Image') {
-            /* Ideally, we would run a test framework against our image.
-            * For this example, we're using a Volkswagen-type approach ;-) */
+            // Ideally, we would run a test framework against our image.
+            // For this example, we're using a Volkswagen-type approach ;-)
             steps {
                 script {
                     app.inside {
@@ -79,7 +80,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
 
         stage('Push Docker image') {
             /* Finally, we'll push the image with two tags:
@@ -89,8 +90,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'my-docker-hub-credentials') {
-                        app.push("${env.DOCKER_IMAGE}")
-                        app.push("${BUILD_NUMBER}")
+                        app.push("latest")
                     }
                 }
             }
