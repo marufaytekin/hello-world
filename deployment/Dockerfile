@@ -26,12 +26,14 @@ RUN mvn install
 FROM openjdk:8-jre-alpine
 ARG ARTIFACTID=hello-world
 ARG VERSION=0.0.1
+ARG JAVA_OPTS="-XX:+UseG1GC"
 
-ENV JAVA_OPTS="-XX:+UseG1GC"
 ENV artifact ${ARTIFACTID}-${VERSION}.jar
 
 WORKDIR /app
 COPY --from=build /app/target/${artifact} /app
+RUN printf "#!/bin/sh\n\njava ${JAVA_OPTS} -jar /app/${artifact}" >> /start
+RUN chmod +x /start
 EXPOSE 8080
 ENTRYPOINT ["sh", "-c"]
-CMD ["java ${JAVA_OPTS} -jar ${artifact}"]
+CMD ["/start"]

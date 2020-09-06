@@ -5,7 +5,7 @@
 FROM openjdk:8-jre-alpine
 ARG artifactid=hello-world
 ARG version=0.0.1
-ENV JAVA_OPTS="-XX:+UseG1GC"
+ARG JAVA_OPTS="-XX:+UseG1GC"
 ENV artifact ${artifactid}-${version}.jar
 
 # Install curl and necessary tools
@@ -13,6 +13,8 @@ RUN apk add --no-cache curl tar bash procps
 
 WORKDIR /app
 COPY target/${artifact} /app
+RUN printf "#!/bin/sh\n\njava ${JAVA_OPTS} -jar /app/${artifact}" >> /start
+RUN chmod +x /start
 EXPOSE 8080
 ENTRYPOINT ["sh", "-c"]
-CMD ["java ${JAVA_OPTS} -jar ${artifact}"]
+CMD ["/start"]

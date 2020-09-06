@@ -1,0 +1,37 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: hello-world
+  namespace: hello-world-ns
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: hello-world
+  template:
+    metadata:
+      labels:
+        component: hello-world
+    spec:
+      containers:
+        - name: hello-world
+          image: stanleywxc/hello-world:latest
+          ports:
+            - name: http
+              containerPort: 8080
+          resources:
+            requests:
+              cpu: 100m
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            periodSeconds: 5
