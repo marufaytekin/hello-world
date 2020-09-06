@@ -119,7 +119,7 @@ pipeline {
         stage('Integeration Tests') {
             steps {
                 script {
-
+                    echo "pretend we passed integration tests"
                 }
             }
         }
@@ -127,7 +127,7 @@ pipeline {
         stage('Deploy it to staging') {
             steps {
                 scripts {
-
+                    echo "pretend we passed deploying to staging"
                 }
             }
         }
@@ -136,7 +136,7 @@ pipeline {
         stage('Smoking test on staging') {
             steps {
                 script {
-
+                    echo "pretend we passed smoking test on staging"
                 }
             }
         }

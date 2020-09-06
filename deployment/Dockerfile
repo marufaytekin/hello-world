@@ -2,7 +2,8 @@
 # Step 1: clone the source repo
 #----------------------------------------------
 FROM alpine/git as clone
-ARG REPO_URL=https://c1351f77934cf55b22b3379d8965238bc478e5c6:x-oauth-basic@github.com/stanleywxc/hello-world.git
+ARG TOEKN
+ARG REPO_URL=https://${TOKEN}:x-oauth-basic@github.com/stanleywxc/hello-world.git
 
 WORKDIR /app
 RUN git clone ${REPO_URL}
