@@ -28,7 +28,7 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build the binary') {
             steps {
                 sh 'env sort'
                 sh 'mvn clean package -Dmaven.test.skip=true'
@@ -36,13 +36,15 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Unit Tests') {
             steps {
                 sh 'mvn test'
                 echo "Test stage Finished"
             }
         }
 
+        // The builds are fine, we need to push it
+        // to artifactory store, which is S3
         stage('Publish build to S3') {
 
             steps {
@@ -54,6 +56,7 @@ pipeline {
         }
         
 
+        // Build the docker image
         stage('Build Docker Image') {
             
            
@@ -68,6 +71,7 @@ pipeline {
             }
         }
 
+        // Test the docker image just built
         stage('Test Docker Image') {
         
             steps {
@@ -94,6 +98,7 @@ pipeline {
             }
         }
         
+        // push it to docker registry
         stage('Push Docker image') {
             steps {
                 
@@ -106,6 +111,68 @@ pipeline {
                         app.push("${BUILD_NUMBER}")
                         app.push("latest")
                     }
+                }
+            }
+        }
+
+        // conduct the integeration tests
+        stage('Integeration Tests') {
+            steps {
+                script {
+
+                }
+            }
+        }
+
+        stage('Deploy it to staging') {
+            steps {
+                scripts {
+
+                }
+            }
+        }
+
+        // conduct the integeration tests
+        stage('Smoking test on staging') {
+            steps {
+                script {
+
+                }
+            }
+        }
+
+        // pretend the build has been approved.
+        stage('Deploy it to Production') {
+            steps {
+                script {
+
+                }
+            }
+        }
+
+        // pretend the build has been approved.
+        stage('Monitoring and smoking test on production') {
+            steps {
+                script {
+
+                }
+            }
+        }
+
+        // pretend the build has been approved.
+        stage('Generate the deployement report') {
+            steps {
+                script {
+
+                }
+            }
+        }
+
+        // pretend the build has been approved.
+        stage('Send Notifiction about the deployement') {
+            steps {
+                script {
+
                 }
             }
         }
