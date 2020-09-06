@@ -18,7 +18,7 @@ pipeline {
         DOCKER_IMAGE="stanleywxc/${PROJECT}"
     }
     stages {
-             
+        
         stage('Setting up environment variables') {
             steps {
                 echo "Region: ${env.REGION}"
@@ -36,14 +36,12 @@ pipeline {
             }
         }
 
-/**
         stage('Test') {
             steps {
                 sh 'mvn test'
                 echo "Test stage Finished"
             }
         }
-**/
 
         stage('Publish build to S3') {
 
@@ -51,9 +49,10 @@ pipeline {
                 echo "Publish artifacts to s3: ${env.S3_PATH}"
 
                 pwd(); //Log current directory
-                //s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: true, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: env.S3_PATH, excludedFile: '', path: env.PROJECT, flatten: true, gzipFiles: false, keepForever: false, managedArtifacts: false, noUploadOnFailure: true, selectedRegion: env.REGION, showDirectlyInBrowser: false, sourceFile: '**/target/*.jar', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 'artifact-s3-profile', userMetadata: []
+                s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: true, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: env.S3_PATH, excludedFile: '', path: env.PROJECT, flatten: true, gzipFiles: false, keepForever: false, managedArtifacts: false, noUploadOnFailure: true, selectedRegion: env.REGION, showDirectlyInBrowser: false, sourceFile: '**/target/*.jar', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 'artifact-s3-profile', userMetadata: []
             }
         }
+        
 
         stage('Build Docker Image') {
             
@@ -64,32 +63,47 @@ pipeline {
                 script {
                     /* This builds the actual image; synonymous to
                     * docker build on the command line */
-                    app = docker.build("${env.DOCKER_IMAGE}:${BUILD_NUMBER}", "-f Dockerfile.jenkins .")
+                    app = docker.build("${env.DOCKER_IMAGE}", "-f Dockerfile.jenkins .")
                 }
             }
         }
 
-        /*
         stage('Test Docker Image') {
-            // Ideally, we would run a test framework against our image.
-            // For this example, we're using a Volkswagen-type approach ;-)
+        
             steps {
                 script {
-                    app.inside {
-                        sh 'curl localhost:8080/healthz'
-                    }
+                    // piece of shit Jenkins unbelievable! app.inside() dosn't work!
+                    // hacking it.
+                    sh '''
+                        # Generate a random port # to avoid conflict
+                        port=$(while :; do ran=$RANDOM; ((ran < 32760)) && echo $((ran + 20000)) && break; done)
+                        
+                        # run the newly built image
+                        docker run --rm -d -p $port:8080 --name $PROJECT-$BUILD_NUMBER $DOCKER_IMAGE
+                        
+                        # sleep 5 seconds to wait it up, sometimes it takes more than 15 seconds
+                        sleep 20
+                        
+                        # stop the running container on exit
+                        trap "docker stop $PROJECT-$BUILD_NUMBER" EXIT
+                        
+                        # anything other than 200 code will fail and wait for maximum 15 seconds
+                        curl -f --connect-timeout 60 --max-time 60 localhost:$port/healthz
+                    '''
                 }
             }
-        }*/
-
+        }
+        
         stage('Push Docker image') {
-            /* Finally, we'll push the image with two tags:
-             * First, the incremental build number from Jenkins
-             * Second, the 'latest' tag.
-             * Pushing multiple tags is cheap, as all the layers are reused. */
             steps {
+                
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'my-docker-hub-credentials') {
+                    // Freaking withRegistry doesn't work!
+                    withCredentials([usernamePassword( credentialsId: 'my-docker-hub-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) 
+                    {
+                        sh "docker login -u ${USERNAME} -p ${PASSWORD}"
+                        
+                        app.push("${BUILD_NUMBER}")
                         app.push("latest")
                     }
                 }
