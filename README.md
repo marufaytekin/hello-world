@@ -43,15 +43,16 @@ NOTE: Please submit github repository url for your solution.
 4. The ["/info"] endpoint returns more info about the running environment, such as java jvm environment variables, build info, host environment variables. Could add some runtime info such as memory usage, CPU usage % etc, but no time to add them.
 
 #### [Question 4]:
+Before you run the build below, you need to generate a github oauth access token with public repo permission.
 1. Dockerfile is in deployment directory
 2. To build the docker image:
 ```
 cd deployment
-docker build . -f Dockerfile -t stanleywxc/hello-world:test
+docker build --build-arg TOKEN=your-github-access-token . -f Dockerfile -t stanleywxc/hello-world:test
 ```
 3. To run the image locally in Docker:
 ```
-docker run -d -p 8080:8080 stanleywxc/hello-world:test
+docker run --rm -d -p 8080:8080 stanleywxc/hello-world:test
 ```
 
 #### [Question 5]:
