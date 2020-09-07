@@ -225,21 +225,12 @@ pipeline {
             steps {
                 script {
                         sh '''
-                            # Check if directory exists
-                            if [ ! -d "./build-reports"]; then
+                            # check if the build-reports exist
+                            if [ ! -d "./build-reports" ]; then
                                 mkdir -p ./build-reports
                             fi
                         '''
-
-
-                        publishHTML (target : [allowMissing: false,
-                         alwaysLinkToLastBuild: true,
-                         keepAll: true,
-                         includes: '**/*',
-                         reportDir: 'build-reports',
-                         reportFiles: "${env.PROJECT}-report.html",
-                         reportName: "${env.PROJECT} Report",
-                         reportTitles: "${env.PROJECT}-report Report"])
+                         //publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'build-reports', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
                 }
             }
         }
