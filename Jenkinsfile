@@ -16,7 +16,11 @@ pipeline {
         PROJECT = 'hello-world'
         S3_PATH="${BUCKET}/${PROJECT}/builds/${JOB_NAME}-${BUILD_NUMBER}"
         DOCKER_IMAGE="stanleywxc/${PROJECT}"
+
+        // Jenkins kubernetes tool
+        PATH="/usr/local/bin:" + "$PATH"
     }
+
     stages {
         
         stage('Setting up environment variables') {
@@ -124,19 +128,44 @@ pipeline {
             }
         }
 
-        stage('Deploy it to staging') {
+        stage('Deploy to Staging') {
             steps {
-                scripts {
-                    echo "pretend we passed deploying to staging"
+                script {
+                    
+                    sh '''
+                        namespace="$PROJECT-staging-$BUILD_NUMBER"
+                        /bin/bash deployment/kubernetes/kube-deploy.sh $namespace $BUILD_NUMBER
+                    '''
                 }
             }
         }
 
         // conduct the integeration tests
-        stage('Smoking test on staging') {
+        stage('Test on Staging') {
             steps {
                 script {
-                    echo "pretend we passed smoking test on staging"
+                    sh '''
+                        # wait for the deployment successful
+                        sleep 120
+                        
+                        # create a test namespace in kubernetes
+                        namespace="$PROJECT-staging-$BUILD_NUMBER"
+                        
+                        # get the port number
+                        port=$(kubectl get svc -n $namespace  -o go-template='{{range .items}}{{range.spec.ports}}{{if .nodePort}}{{.nodePort}}{{\"\\n\"}}{{end}}{{end}}{{end}}')
+                    
+                        # clean up if any error
+                        trap "kubectl delete namespace $namespace" EXIT
+                        
+                        # test case 1
+                        curl -f localhost:$port
+                        
+                        #test case 2
+                        curl -f localhost:$port/healthz
+                        
+                        # test case 3
+                        curl -f localhost:$port/info
+                    '''
                 }
             }
         }
@@ -145,16 +174,48 @@ pipeline {
         stage('Deploy it to Production') {
             steps {
                 script {
+                    
+                    sh '''
+                        # Since I am deploying it into the same kubernetes on my Mac
+                        # Need to wait for kube to finish its clean up.
+                        sleep 120
 
+                        # prodcution namespace 
+                        namespace="$PROJECT-ns"
+
+                        # deploy it to production namespace
+                        /bin/bash deployment/kubernetes/kube-deploy.sh $namespace $BUILD_NUMBER
+                    '''
                 }
             }
         }
 
         // pretend the build has been approved.
-        stage('Monitoring and smoking test on production') {
+        stage('Test on Production') {
             steps {
                 script {
+                    sh '''
+                        # wait for the deployment finishes
+                        sleep 120
+                        
+                        # productino name space
+                        namespace="$PROJECT-ns"
+                        
+                        # clean up if any error and on exit
+                        trap "kubectl delete namespace $namespace" EXIT
 
+                        # get the port number
+                        port=$(kubectl get svc -n $namespace  -o go-template='{{range .items}}{{range.spec.ports}}{{if .nodePort}}{{.nodePort}}{{\"\\n\"}}{{end}}{{end}}{{end}}')
+                        
+                        # test case 1
+                        curl -f localhost:$port
+                        
+                        #test case 2
+                        curl -f localhost:$port/healthz
+                        
+                        # test case 3
+                        curl -f localhost:$port/info
+                    '''
                 }
             }
         }
@@ -163,7 +224,22 @@ pipeline {
         stage('Generate the deployement report') {
             steps {
                 script {
+                        sh '''
+                            # Check if directory exists
+                            if [ ! -d "./build-reports"]; then
+                                mkdir -p ./build-reports
+                            fi
+                        '''
 
+
+                        publishHTML (target : [allowMissing: false,
+                         alwaysLinkToLastBuild: true,
+                         keepAll: true,
+                         includes: '**/*',
+                         reportDir: 'build-reports',
+                         reportFiles: "${env.PROJECT}-report.html",
+                         reportName: "${env.PROJECT} Report",
+                         reportTitles: "${env.PROJECT}-report Report"])
                 }
             }
         }
@@ -172,7 +248,8 @@ pipeline {
         stage('Send Notifiction about the deployement') {
             steps {
                 script {
-
+                    echo "pretend notification being sent"
+                    echo "we can config AWS SNS to send text message/emails to the concerned parties"
                 }
             }
         }
