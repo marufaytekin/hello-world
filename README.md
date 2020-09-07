@@ -65,14 +65,20 @@ docker run --rm -d -p 8080:8080 stanleywxc/hello-world:test
 ##### - What stages would you have in the CICD pipeline?
      At the high level, CICD piplines are CI Pipeline, which includes stages of Build, Unit Test, Integration Tests and CD Pipeline which includes stages of Review, Staging, Production.
      
-     At minimum in production deployment, there should be 'build', 'test', (or pre-built artifacts), 'deploy', 'check deployment live status', 'switch traffic', 'wait old traffic dry', 'stop old instances',      'notification deployment status'. 
-     If there are errors happened after deployment and timeout during 'check deployment live status', we should 'rollback' to old deployment and mark this deployment fail. 
+     what I have in CICD pipeline:
+     1. stage('Build the binary')
+     2. stage('Unit Tests') 
+     3. stage('Publish build to S3'), served as artifacts storage
+     4. stage('Build Docker Image')
+     5. stage('Test Docker Image') 
+     6. stage('Push Docker image'), push docker image to Docker repo, so it can be consumed by kubernetes
+     7. stage('Integeration Tests') If any, we don't have
+     8. stage('Deploy to Staging'), using PROJECT-$BUILD_NUMBER as namespace in kube to isolate the environments
+     9. stage('Test on Staging') 
+     10. stage('Deploy it to Production')
+     11. stage('Test on Production')
+     12. stage('Generate the deployement report') (The plugin, having problems, still trying to figure out)
+     13. stage('Send Notifiction about the deployement')
      
  ##### - What would be the purpose of each stage in CICD pipeline
-   - stage 'build': to build artifacts, or pull the code repo to run the app
-   - stage 'test': to verify the build is functioning as it supposes to, specially the test cases coverages should be sufficient enough to ensure the quality of deployment. This stage includes unit test and integration test.
-   - stage 'deploy': the actual deployment, either deploy into docker/kubernetes, or standalone servers/clusters.
-   - stage 'check deployment live status': this stage is to check if the deployment is functionning before we switch the traffic to the new deployment.
-   - stage 'switch traffic': switch the traffic, and wait the traffic to old deployment drying out.
-   - stage 'stop old instances': after we see the old traffic dried out and the deployment is working, we need to stop the old instances.
-   - stage 'rollback', rollback to old deployment if the new deployment having problems.
+   -- they are very self explanatory in my above stage labels.
